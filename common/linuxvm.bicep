@@ -39,13 +39,8 @@ resource nicNameLinuxResource 'Microsoft.Network/networkInterfaces@2020-05-01' =
   }
 }]
 
-// reference an existing key vault in a different resource group
-// https://hexmaster.nl/posts/bicep-existing/
-// resource deployTimeKeyVault 'Microsoft.KeyVault/vaults@2021-04-01-preview' existing = {
-//  name: 'az400popliukeyvault'
-//  scope: resourceGroup('az400')
-// }
-
+// see how to use cloud-init
+// https://docs.microsoft.com/en-us/azure/virtual-machines/linux/tutorial-automate-vm-deployment
 resource vmNameLinuxResource 'Microsoft.Compute/virtualMachines@2019-07-01' = [for (config, i) in virtualMachineDefinitions: {
   name: config.name
   location: location
@@ -71,18 +66,6 @@ resource vmNameLinuxResource 'Microsoft.Compute/virtualMachines@2019-07-01' = [f
           ]
         }
       }
-      secrets: [
-        { 
-          sourceVault: { 
-            id: '/subscriptions/ce2c696e-9825-44f7-9a68-f34d153e64ba/resourceGroups/az400/providers/Microsoft.KeyVault/vaults/az400popliukeyvault'
-          }
-          vaultCertificates: [
-            {
-              certificateUrl: 'base64 encoded string' // https://docs.microsoft.com/en-us/azure/templates/microsoft.compute/2015-06-15/virtualmachines?tabs=json#VaultCertificate
-            } 
-          ] 
-        } 
-      ]
     }
     storageProfile: {
       imageReference: {

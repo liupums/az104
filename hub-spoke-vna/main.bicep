@@ -77,7 +77,7 @@ var vNetSpokeDefinitions = [
 
 // deploy the Hub/Spoke vNET
 module vnetHubSpoke '../common/vnethubspoke.bicep' = {
-  name: 'vnetname'
+  name: 'HubSpokeVnet'
   scope: azhubspokerg
   params: {
     vNetHubDefinitions: vNetHubDefinitions
@@ -102,7 +102,7 @@ var virtualMachineDefinitions = [
 ]
 
 module vms '../common/linuxvm.bicep' = {
-  name: 'linuxVms'
+  name: 'LinuxVms'
   scope: azhubspokerg
   params: {
     virtualMachineDefinitions: virtualMachineDefinitions
