@@ -15,6 +15,7 @@ resource az104rg 'Microsoft.Resources/resourceGroups@2020-06-01' = {
 }
 
 // define vNETs
+// vNET1 (subnet1) and vNET2 (subnet1)
 var vNetsDefinitions = [
   {
     name: 'vNet1'
@@ -40,19 +41,23 @@ var vNetsDefinitions = [
   }
 ]
 
+// define peering
+// vNET1 --> vNET2
+// vNET2 --> vNET1
 var vNetsPeeringDefinitions = [
   {
     name: 'vNet1-vNet2'
-    myId: 0
-    remoteId: 1
+    myId: 0 // index 0
+    remoteId: 1 // index 1
   }
   {
     name: 'vNet2-vNet1'
-    myId: 1 
-    remoteId: 0
+    myId: 1  // index 1
+    remoteId: 0 // index 0
   }
 ]
 
+// deploy the vNET and peering
 module vnets './vnet.bicep' = {
   name: 'vnetname'
   scope: az104rg
@@ -62,15 +67,16 @@ module vnets './vnet.bicep' = {
   }
 }
 
+// Based on output subnets, creating the VMs
 var virtualMachineDefinitions = [
   {
     name: 'LinuxVnet1Subnet1Vm1'
-    subnet: vnets.outputs.subnets[0].subnets[0].id
+    subnet: vnets.outputs.vNETSettings[0].subnets[0].id
     vmSize: 'Standard_A1_v2'
   }
   {
     name: 'LinuxVnet2Subnet1Vm1'
-    subnet: vnets.outputs.subnets[1].subnets[0].id
+    subnet: vnets.outputs.vNETSettings[1].subnets[0].id
     vmSize: 'Standard_A1_v2'
   }
 ]
