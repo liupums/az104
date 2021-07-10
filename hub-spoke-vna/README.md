@@ -28,3 +28,51 @@ This template creates Hub-Spoke vNETs in the same location, see the [referenced 
 
 # TODO
 How to use [KeyVault for SSL certificates](https://github.com/Azure/azure-quickstart-templates/tree/master/quickstarts/microsoft.compute/vmss-ubuntu-web-ssl)
+
+# Full transcript of testing
+```
+LAPTOP-MAIGQA9N:hub-spoke-vna puliu$ ssh azureuser@13.91.247.164
+Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.4.0-1051-azure x86_64)
+
+azureuser@LinuxTest1:~$ ifconfig | grep 'inet '
+        inet 10.1.0.4  netmask 255.255.255.0  broadcast 10.1.0.255
+        inet 127.0.0.1  netmask 255.0.0.0
+azureuser@LinuxTest1:~$ sudo traceroute -T 10.0.0.4
+traceroute to 10.0.0.4 (10.0.0.4), 30 hops max, 60 byte packets
+ 1  192.168.0.7 (192.168.0.7)  3.604 ms 192.168.0.6 (192.168.0.6)  2.537 ms  2.522 ms
+ 2  10.0.0.4 (10.0.0.4)  8.499 ms  8.486 ms  8.472 ms
+azureuser@LinuxTest1:~$ sudo traceroute -T www.google.com
+traceroute to www.google.com (216.58.195.68), 30 hops max, 60 byte packets
+ 1  192.168.0.6 (192.168.0.6)  2.724 ms  2.701 ms 192.168.0.7 (192.168.0.7)  2.687 ms
+ 2  * * *
+ 3  * * *
+ 4  * * *
+ 5  * * *
+ 6  * * *
+ 7  * * *
+ 8  * * *
+ 9  * * *
+10  * * *
+11  * * *
+12  sfo07s16-in-f68.1e100.net (216.58.195.68)  4.145 ms * *
+azureuser@LinuxTest1:~$ curl 10.1.0.4
+Hello World from host LinuxTest1!azureuser@LinuxTest1:~$ 
+azureuser@LinuxTest1:~$ 
+azureuser@LinuxTest1:~$ service nginx status
+● nginx.service - A high performance web server and a reverse proxy server
+   Loaded: loaded (/lib/systemd/system/nginx.service; enabled; vendor preset: enabled)
+   Active: active (running) since Sat 2021-07-10 16:40:56 UTC; 56min ago
+     Docs: man:nginx(8)
+  Process: 9388 ExecStop=/sbin/start-stop-daemon --quiet --stop --retry QUIT/5 --pidfile /run/nginx.pid (code=exited, status=0/SUCCESS)
+  Process: 9403 ExecStart=/usr/sbin/nginx -g daemon on; master_process on; (code=exited, status=0/SUCCESS)
+  Process: 9391 ExecStartPre=/usr/sbin/nginx -t -q -g daemon on; master_process on; (code=exited, status=0/SUCCESS)
+ Main PID: 9407 (nginx)
+    Tasks: 2 (limit: 2263)
+   CGroup: /system.slice/nginx.service
+           ├─9407 nginx: master process /usr/sbin/nginx -g daemon on; master_process on;
+           └─9411 nginx: worker process
+
+Jul 10 16:40:56 LinuxTest1 systemd[1]: Starting A high performance web server and a reverse proxy server...
+Jul 10 16:40:56 LinuxTest1 systemd[1]: nginx.service: Failed to parse PID from file /run/nginx.pid: Invalid argument
+Jul 10 16:40:56 LinuxTest1 systemd[1]: Started A high performance web server and a reverse proxy server.
+```
