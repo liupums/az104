@@ -6,13 +6,10 @@ It then establishes a BGP enabled connection between Hub and SpokeProd, and Hub 
 
 To demonstrate the transitive routing capabilities, deploy LinuxProd1 VM in SpokeProd and LinuxTest1 VM in SpokeTest. Then SSH to LinuxProd1 and from LinuxProd1, testing the connection with LinuxTest1
 
+Reference [vnet-transitive-bgp](https://github.com/Azure/azure-quickstart-templates/tree/master/quickstarts/microsoft.network/vnet-transitive-bgp)
 # How to build and deploy
 - `az bicep build -f main.bicep`
 - `az deployment sub create --location westus --template-file main.bicep --parameters @main.parameters.json`
-
-Notes:
-- The Autonomous System Numbers (ASNs) can be private or public (if you do use a public one, you must be able to prove ownership of it)
-- Enter the Pre-shared Key as a parameter
 
 # Full transcript of testing
 - Loggon to LinuxProd1, then trace route to LinuxTest1 10.1.1.4
