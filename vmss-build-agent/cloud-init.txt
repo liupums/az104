@@ -1,0 +1,6 @@
+#cloud-config
+#cat cloud-init.txt | base64
+package_upgrade: true
+packages:
+  - traceroute
+  - maven

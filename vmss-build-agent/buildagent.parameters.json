@@ -1,0 +1,12 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "adminSshPubKey": {
+      "value": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDErfUYMmml5TPUdAE93SF7Tm8pr/8iHkV6thF4JhM19aH+YIQ6uw+dA5d059S1WUGwood6gVmjiGNaeKe3GqLLF9uus+tDqk89uYDAaFWiZnl/oOun9tTH89ks/UOmxO+4PoT6SA4a55HgzjvMIwgcAzB+uHLT0WW34YyQibiIqL+1LwjlalgepN+Xggv3EPvJ2EtWItDMhEgNZbcue5oiknUbJohbOzPhFHYcyxnyKAMmCAhmPkMG/IBz/csEoVtNFsD0AO6HLzNMY1AuB7I8YdTcq87gyiAImRlSnmdYcPHd7CgYs0OyIZUFL9OVfcdGpF/C/0lSJHo65jWuuALzdLxu5pWeFDcX0WEpXpvpMFDTCmi4gT2zMkoY/81D7tnaNabzkt5skUKy2W8C7I/4hgbS+enppL3DImUy/knQtEUDZMvVMYE/B+0FDWGqo4uTJycSAEUGQxaluzO2vMcjC5hCCCsiCr0qLAkoP5qou4goReQJca05ztAwj8GrCYM= generated-by-azure"
+    },
+    "cloudInit": {
+      "value": "I2Nsb3VkLWNvbmZpZwojY2F0IGNsb3VkLWluaXQudHh0IHwgYmFzZTY0CnBhY2thZ2VfdXBncmFkZTogdHJ1ZQpwYWNrYWdlczoKICAtIHRyYWNlcm91dGUKICAtIG1hdmVuCg=="
+    }
+  }
+}
