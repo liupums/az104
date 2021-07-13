@@ -24,7 +24,7 @@ The Microsoft doc is available [here](https://docs.microsoft.com/en-us/azure/dev
   Azure Key Vault Secret: az400privatekey
   ``` 
 - Check build agent
-  NOTE: it might take several minutes for the VMSS to connect with Azure DevOps
+  NOTE: it might take several minutes for the VMSS to connect with Azure DevOps, [Azure DevOps CLI](https://docs.microsoft.com/en-us/cli/azure/service-page/azure%20pipelines?view=azure-cli-latest)
 
   - Check pool
   ```
