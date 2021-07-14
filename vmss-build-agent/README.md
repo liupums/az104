@@ -1,4 +1,4 @@
-# VNET to VNET connection
+# Azure DevOps, Build Agent VMSS
 This template creates vmss build agent for Azure DevOps, see the [referenced tutorial](https://github.com/matt-FFFFFF/terraform-azuredevops-vmss-agent)
 The Microsoft doc is available [here](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/scale-set-agents?view=azure-devops)
 
