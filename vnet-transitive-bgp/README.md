@@ -44,6 +44,7 @@ traceroute to 10.1.1.4 (10.1.1.4), 30 hops max, 60 byte packets
 ```
 
 - Loggon to LinuxTest1, then trace route to LinuxProd1 via private IP  10.0.1.4
+```
 LAPTOP-MAIGQA9N:vnet-transitive-bgp puliu$ az vm show -d -g hubSpokeBgp -n LinuxTest1 --query publicIps -o tsv
 13.64.17.146
 LAPTOP-MAIGQA9N:vnet-transitive-bgp puliu$ ssh azureuser@13.64.17.146
@@ -52,3 +53,4 @@ Welcome to Ubuntu 18.04.5 LTS (GNU/Linux 5.4.0-1051-azure x86_64)
 azureuser@LinuxTest1:~$ sudo traceroute -T 10.0.1.4
 traceroute to 10.0.1.4 (10.0.1.4), 30 hops max, 60 byte packets
  1  10.0.1.4 (10.0.1.4)  13.832 ms  18.450 ms  18.437 ms
+```

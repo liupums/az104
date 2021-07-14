@@ -1,4 +1,4 @@
-# VNET to VNET connection
+# Azure DevOps, Build Agent VMSS
 This template creates vmss build agent for Azure DevOps, see the [referenced tutorial](https://github.com/matt-FFFFFF/terraform-azuredevops-vmss-agent)
 The Microsoft doc is available [here](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/scale-set-agents?view=azure-devops)
 
@@ -10,8 +10,6 @@ The Microsoft doc is available [here](https://docs.microsoft.com/en-us/azure/dev
 - The [cloud-init.txt](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/tutorial-automate-vm-deployment) is used to install maven and traceroute
 - A maunal step is needed to convet the cloud-init.txt to base64 string and then add to main.parameters.json  
 `cat cloud-init.txt | base64` 
-
-# TODO
 
 # Full transcript of testing
 - Use Bastion to logon VM
