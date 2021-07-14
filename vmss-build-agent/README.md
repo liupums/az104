@@ -11,8 +11,6 @@ The Microsoft doc is available [here](https://docs.microsoft.com/en-us/azure/dev
 - A maunal step is needed to convet the cloud-init.txt to base64 string and then add to main.parameters.json  
 `cat cloud-init.txt | base64` 
 
-# TODO
-
 # Full transcript of testing
 - Use Bastion to logon VM
   Goto 'buildagent' -> Instances -> buildagent_0 (for example) -> Connect with Bastion
