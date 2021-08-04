@@ -8,3 +8,7 @@ Run
 2. run "dotnet build", if the nuget reports error, run "dotnet nuget add source --name nuget.org https://api.nuget.org/v3/index.json"
 3. fill in proper values in appsettings.json
 4. run "dotnet run"
+
+References
+GitHub - Azure-Samples/active-directory-dotnetcore-daemon-v2: A .NET Core 3.x daemon console application calling Microsoft Graph or your own WebAPI with its own identity
+git clone https://github.com/Azure-Samples/active-directory-dotnetcore-daemon-v2.git

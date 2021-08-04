@@ -79,6 +79,10 @@ namespace daemon_console
         /// <remarks> 
         public string CertificateThumbprint { get; set; }
 
+        public string KeyvaultName { get; set; }
+        public string KeyvaultSecretName { get; set; }
+        public string KeyvaultApiVersion { get; set; }
+
         /// <summary>
         /// Reads the configuration from a json file
         /// </summary>

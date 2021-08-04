@@ -10,6 +10,9 @@ using System.Net.Http;
 using System.Security.Cryptography.X509Certificates; //Only import this if you are using certificate
 using System.Threading.Tasks;
 
+using Azure.Security.KeyVault.Secrets;
+using Azure.Identity;
+
 namespace daemon_console
 {
     /// <summary>
@@ -62,7 +65,7 @@ namespace daemon_console
             //         .Build();
             // }
 
-            Console.WriteLine(config.CertificateThumbprint);
+            Console.WriteLine($"client certificate thumbprint: {config.CertificateThumbprint}");
             X509Certificate2 certificate = ReadCertificateByThumbprint(config.CertificateThumbprint);
             app = ConfidentialClientApplicationBuilder.Create(config.ClientId)
                 .WithCertificate(certificate)
@@ -77,10 +80,9 @@ namespace daemon_console
             AuthenticationResult result = null;
             try
             {
-                result = await app.AcquireTokenForClient(scopes)
-                    .ExecuteAsync();
+                result = await app.AcquireTokenForClient(scopes).ExecuteAsync();
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Token acquired");
+                Console.WriteLine("Microsoft.Graph Token acquired");
                 Console.ResetColor();
             }
             catch (MsalServiceException ex) when (ex.Message.Contains("AADSTS70011"))
@@ -96,7 +98,48 @@ namespace daemon_console
             {
                 var httpClient = new HttpClient();
                 var apiCaller = new ProtectedApiCallHelper(httpClient);
+                Console.WriteLine("Call Microsoft.Graph");
                 await apiCaller.CallWebApiAndProcessResultASync($"{config.ApiUrl}v1.0/users", result.AccessToken, Display);
+            }
+            
+            Console.WriteLine("Call Azure KeyVault SecretClient");
+            var keyvaultName = String.IsNullOrEmpty(config.KeyvaultName)? "popcsakeyvaultmt" : config.KeyvaultName;
+            var secretName = String.IsNullOrEmpty(config.KeyvaultSecretName)? "MySecretMultiTenant" : config.KeyvaultSecretName;
+
+            var tokenId = new ClientCertificateCredential(config.Tenant, config.ClientId, certificate);
+            var client = new SecretClient(new Uri($"https://{keyvaultName}.vault.azure.net"), tokenId);
+            var secret = client.GetSecret(secretName).Value;
+            Console.WriteLine($"SecretClient got secret '{secret.Value}'");
+
+            // The scope has to be of the form "https://resourceurl/.default"
+            string[] akvScopes = new string[] { "https://vault.azure.net/.default" };
+            result = null;
+            try
+            {
+                result = await app.AcquireTokenForClient(akvScopes).ExecuteAsync();
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Azure KeyVault Token acquired");
+                Console.ResetColor();
+            }
+            catch (MsalServiceException ex) when (ex.Message.Contains("AADSTS70011"))
+            {
+                // Invalid scope. The scope has to be of the form "https://resourceurl/.default"
+                // Mitigation: change the scope to be as expected
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Scope provided is not supported");
+                Console.ResetColor();
+            }
+
+            if (result != null)
+            {
+                var httpClient = new HttpClient();
+                var apiCaller = new ProtectedApiCallHelper(httpClient);
+                Console.WriteLine("Call Microsoft.KeyValut");
+                var akv_api_version = String.IsNullOrEmpty(config.KeyvaultApiVersion)? "7.2" : config.KeyvaultApiVersion; 
+                // https://docs.microsoft.com/en-us/rest/api/keyvault/get-secret
+                await apiCaller.CallWebApiAndProcessResultASync(
+                    $"https://{keyvaultName}.vault.azure.net/secrets/{secretName}?api-version={akv_api_version}",
+                    result.AccessToken, Display);
             }
         }
 
