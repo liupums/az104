@@ -12,6 +12,10 @@ using System.Threading.Tasks;
 
 using Azure.Security.KeyVault.Secrets;
 using Azure.Identity;
+using System.Net;
+using System.Net.Security;
+using System.Collections.Generic;
+
 
 namespace daemon_console
 {
@@ -37,6 +41,21 @@ namespace daemon_console
 
             Console.WriteLine("Press any key to exit");
             Console.ReadKey();
+        }
+
+        private static bool ServerCertificateCustomValidation(HttpRequestMessage requestMessage, X509Certificate2 certificate, X509Chain chain, SslPolicyErrors sslErrors)
+        {
+            // It is possible inpect the certificate provided by server
+            Console.WriteLine($"Requested URI: {requestMessage.RequestUri}");
+            Console.WriteLine($"Effective date: {certificate.GetEffectiveDateString()}");
+            Console.WriteLine($"Exp date: {certificate.GetExpirationDateString()}");
+            Console.WriteLine($"Issuer: {certificate.Issuer}");
+            Console.WriteLine($"Subject: {certificate.Subject}");
+
+            // Based on the custom logic it is possible to decide whether the client considers certificate valid or not
+            Console.WriteLine($"Errors: {sslErrors}");
+            return true;
+            // return sslErrors == SslPolicyErrors.None;
         }
 
         private static async Task RunAsync()
@@ -119,6 +138,7 @@ namespace daemon_console
                 result = await app.AcquireTokenForClient(akvScopes).ExecuteAsync();
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.WriteLine("Azure KeyVault Token acquired");
+                Console.WriteLine(result.AccessToken);
                 Console.ResetColor();
             }
             catch (MsalServiceException ex) when (ex.Message.Contains("AADSTS70011"))
@@ -140,6 +160,59 @@ namespace daemon_console
                 await apiCaller.CallWebApiAndProcessResultASync(
                     $"https://{keyvaultName}.vault.azure.net/secrets/{secretName}?api-version={akv_api_version}",
                     result.AccessToken, Display);
+            }
+
+            // The scope has to be of the form "https://resourceurl/.default"
+            string[] todoListScopeScopes = new string[] { config.TodoListScope };
+            result = null;
+            try
+            {
+                result = await app.AcquireTokenForClient(todoListScopeScopes).ExecuteAsync();
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Token acquired \n");
+                Console.ResetColor();
+            }
+            catch (MsalServiceException ex) when (ex.Message.Contains("AADSTS70011"))
+            {
+                // Invalid scope. The scope has to be of the form "https://resourceurl/.default"
+                // Mitigation: change the scope to be as expected
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Scope provided is not supported");
+                Console.ResetColor();
+            }
+
+            if (result != null)
+            {
+                // Create an HttpClientHandler object and set to use default credentials
+                HttpClientHandler handler = new HttpClientHandler();
+
+                // Set custom server validation callback
+                handler.ServerCertificateCustomValidationCallback = ServerCertificateCustomValidation;
+
+                // Create an HttpClient object
+                var httpClient = new HttpClient(handler);
+                var apiCaller = new ProtectedApiCallHelper(httpClient);
+                await apiCaller.CallWebApiAndProcessResultASync($"{config.TodoListBaseAddress}/api/todolist", 
+                    result.AccessToken, DisplayWebApiResult);
+            }
+        }
+
+        /// <summary>
+        /// Display the result of the Web API call
+        /// </summary>
+        /// <param name="result">Object to display</param>
+        private static void DisplayWebApiResult(IEnumerable<JObject> result)
+        {
+            Console.WriteLine("Web Api result: \n");
+
+            foreach (var item in result)
+            {
+                foreach (JProperty child in item.Properties().Where(p => !p.Name.StartsWith("@")))
+                {
+                    Console.WriteLine($"{child.Name} = {child.Value}");
+                }
+
+                Console.WriteLine("");
             }
         }
 

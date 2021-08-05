@@ -83,6 +83,9 @@ namespace daemon_console
         public string KeyvaultSecretName { get; set; }
         public string KeyvaultApiVersion { get; set; }
 
+        public string TodoListBaseAddress { get; set; }
+        public string TodoListScope { get; set; }
+
         /// <summary>
         /// Reads the configuration from a json file
         /// </summary>
