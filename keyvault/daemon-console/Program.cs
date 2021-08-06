@@ -169,7 +169,8 @@ namespace daemon_console
             {
                 result = await app.AcquireTokenForClient(todoListScopeScopes).ExecuteAsync();
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Token acquired \n");
+                Console.WriteLine("WebApi Token acquired");
+                Console.WriteLine(result.AccessToken);
                 Console.ResetColor();
             }
             catch (MsalServiceException ex) when (ex.Message.Contains("AADSTS70011"))
