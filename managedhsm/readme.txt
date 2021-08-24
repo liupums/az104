@@ -529,3 +529,66 @@ C:\Users\azureuser>az keyvault key list --id https://az400popmhsm.managedhsm.azu
 
 
 C:\Users\azureuser\keyvault-console-app>az keyvault key show --id https://az400popmhsm.managedhsm.azure.net/keys/CloudRsaKey-df54998a-ac05-4238-a6bb-63137808c99f
+
+
+https://github.com/Azure/azure-sdk-for-net/tree/main/sdk/keyvault/Azure.Security.KeyVault.Keys
+
+
+https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token
+The fundamental interface for acquiring an access token is based on REST, making it accessible to any client application running on the VM that can make HTTP REST calls. This is similar to the Azure AD programming model, except the client uses an endpoint on the virtual machine (vs an Azure AD endpoint).
+Sample request using the Azure Instance Metadata Service (IMDS) endpoint (recommended):
+
+PS C:\Users\azureuser\keyvault-console-app> $r = invoke-webrequest 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://management.azure.com/' -Headers @{'metadata'='true'} -UseBasicParsing
+PS C:\Users\azureuser\keyvault-console-app> $r.Content
+{"access_token":"xxx",
+ "client_id":"2084ae4a-2cb6-495c-8892-e8c5f942cad1",
+ "expires_in":"86333",
+ "expires_on":"1629845848",
+ "ext_expires_in":"86399",
+ "not_before":"1629759148",
+ "resource":"https://management.azure.com/",
+ "token_type":"Bearer"}
+
+HEADER:ALGORITHM & TOKEN TYPE
+
+{
+  "typ": "JWT",
+  "alg": "RS256",
+  "x5t": "nOo3ZDrODXEK1jKWhXslHR_KXEg",
+  "kid": "nOo3ZDrODXEK1jKWhXslHR_KXEg"
+}
+{
+  "typ": "JWT",
+  "alg": "RS256",
+  "x5t": "nOo3ZDrODXEK1jKWhXslHR_KXEg",
+  "kid": "nOo3ZDrODXEK1jKWhXslHR_KXEg"
+}
+PAYLOAD:DATA
+
+{
+  "aud": "https://management.azure.com/",
+  "iss": "https://sts.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47/",
+  "iat": 1629759148,
+  "nbf": 1629759148,
+  "exp": 1629845848,
+  "aio": "E2ZgYHh/XJ5rI+elrXfmCj6NYrzNBwA=",
+  "appid": "2084ae4a-2cb6-495c-8892-e8c5f942cad1",
+  "appidacr": "2",
+  "idp": "https://sts.windows.net/72f988bf-86f1-41af-91ab-2d7cd011db47/",
+  "oid": "30c7f262-1107-49d2-882a-abeb0050f854",
+  "rh": "0.ARoAv4j5cvGGr0GRqy180BHbR0quhCC2LFxJiJLoxflCytEaAAA.",
+  "sub": "30c7f262-1107-49d2-882a-abeb0050f854",
+  "tid": "72f988bf-86f1-41af-91ab-2d7cd011db47",
+  "uti": "h_EsYsvI6EaU4p-gACpTAA",
+  "ver": "1.0",
+  "xms_mirid": "/subscriptions/ce2c696e-9825-44f7-9a68-f34d153e64ba/resourcegroups/ContosoResourceGroup/providers/Microsoft.Compute/virtualMachines/testvmmhsm",
+  "xms_tcdt": "1289241547"
+}
+
+
+
+
+$response = Invoke-WebRequest -Uri 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https://managedhsm.azure.net' -Headers @{Metadata="true"} -UseBasicParsing
+$content =$response.Content | ConvertFrom-Json
+$access_token = $content.access_token
+$keysInfoRest = (Invoke-WebRequest -Uri 'https://az400popmhsm.managedhsm.azure.net/keys?api-version=7.2' -Method GET -ContentType "application/json" -Headers @{ Authorization ="Bearer $access_token"} -UseBasicParsing).content
