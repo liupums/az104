@@ -50,3 +50,8 @@ C:\Users\puliu\keyvault>az vm identity assign -g contosoresourcegroup -n testvmm
     }
   }
 }
+
+For keyvault, you need to choose between Access Policy and RBAC
+The RBAC works for user-defined managed identity
+
+
