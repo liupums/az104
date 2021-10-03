@@ -1,0 +1,85 @@
+{
+    "value": [
+        {
+            "attributes": {
+                "created": 1629406593,
+                "enabled": true,
+                "exportable": false,
+                "recoverableDays": 28,
+                "recoveryLevel": "CustomizedRecoverable+Purgeable",
+                "updated": 1629406593
+            },
+            "kid": "https://az400popmhsm.managedhsm.azure.net/keys/myrsakey"
+        },
+        {
+            "attributes": {
+                "created": 1629406790,
+                "enabled": true,
+                "exportable": false,
+                "recoverableDays": 28,
+                "recoveryLevel": "CustomizedRecoverable+Purgeable",
+                "updated": 1629406790
+            },
+            "kid": "https://az400popmhsm.managedhsm.azure.net/keys/myaeskey"
+        },
+        {
+            "attributes": {
+                "created": 1629406963,
+                "enabled": true,
+                "exportable": true,
+                "recoverableDays": 28,
+                "recoveryLevel": "CustomizedRecoverable+Purgeable",
+                "updated": 1629406963
+            },
+            "kid": "https://az400popmhsm.managedhsm.azure.net/keys/mypemrsakey"
+        },
+        {
+            "attributes": {
+                "created": 1629753443,
+                "enabled": true,
+                "exp": 1661289443,
+                "exportable": false,
+                "recoverableDays": 28,
+                "recoveryLevel": "CustomizedRecoverable+Purgeable",
+                "updated": 1629753443
+            },
+            "kid": "https://az400popmhsm.managedhsm.azure.net/keys/CloudRsaKey-df54998a-ac05-4238-a6bb-63137808c99f"
+        },
+        {
+            "attributes": {
+                "created": 1629763058,
+                "enabled": true,
+                "exp": 1661299057,
+                "exportable": false,
+                "recoverableDays": 28,
+                "recoveryLevel": "CustomizedRecoverable+Purgeable",
+                "updated": 1629763058
+            },
+            "kid": "https://az400popmhsm.managedhsm.azure.net/keys/CloudRsaKey-06e8d542-49f0-4557-a30b-a7565b58db7b"
+        },
+        {
+            "attributes": {
+                "created": 1629765692,
+                "enabled": true,
+                "exp": 1661301691,
+                "exportable": false,
+                "recoverableDays": 28,
+                "recoveryLevel": "CustomizedRecoverable+Purgeable",
+                "updated": 1629765692
+            },
+            "kid": "https://az400popmhsm.managedhsm.azure.net/keys/CloudRsaKey-62e5dab0-b690-4ac0-b1e4-573ee6389b43"
+        },
+        {
+            "attributes": {
+                "created": 1630874401,
+                "enabled": true,
+                "exp": 1662410400,
+                "exportable": false,
+                "recoverableDays": 28,
+                "recoveryLevel": "CustomizedRecoverable+Purgeable",
+                "updated": 1630874401
+            },
+            "kid": "https://az400popmhsm.managedhsm.azure.net/keys/CloudRsaKey-bdc3af68-d61f-424d-b97d-e6e3a8e718b7"
+        }
+    ]
+}

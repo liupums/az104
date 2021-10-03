@@ -1,0 +1,69 @@
+﻿using System;
+using System.Threading.Tasks;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Collections.Generic;
+using System.Text.Json;
+using System.Text;
+
+namespace vm_identity_console_app
+{
+    class Program
+    {
+        private static readonly HttpClient client = new HttpClient();
+
+        static async Task Main(string[] args)
+        {
+            await Process();
+        }
+        
+        private static async Task Process()
+        {
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(
+                new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Add("Metadata", "true");
+            Console.WriteLine("hsm test");
+            var resource = "https://managedhsm.azure.net";
+            var hsmTokenUri = $"http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource={resource}";
+            var streamTask = client.GetStreamAsync(hsmTokenUri); 
+            var token = await JsonSerializer.DeserializeAsync<AzureJwt>(await streamTask);
+            // Console.Write(token.access_token);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token.access_token);
+            /*
+            var hsmKeysUri = "https://az400popmhsm.managedhsm.azure.net/keys?api-version=7.2";
+            var keysInfoTask = client.GetStringAsync(hsmKeysUri); 
+            var msg = await keysInfoTask;
+            Console.WriteLine(msg);*/
+            var hsmEncryptUri = "https://az400popmhsm.managedhsm.azure.net//keys/mypemrsakey/encrypt";
+            HttpRequestMessage encRequest = new HttpRequestMessage(HttpMethod.Post, hsmEncryptUri);
+            /*
+            {
+            "alg": "RSA1_5",
+            "value": "5ka5IVsnGrzufA"
+            }
+            */
+            encRequest.Content = new StringContent("{\"alg\":\"RSA1_5\",\"value\":\"abcdef\"}",
+                                    Encoding.UTF8, 
+                                    "application/json");//CONTENT-TYPE header
+            var task = client.SendAsync(encRequest);
+            var response = await task;
+            Console.WriteLine(response.StatusCode);
+            Console.WriteLine(response.Headers.ToString());
+            string result = response.Content.ReadAsStringAsync().Result;
+            Console.WriteLine(result);
+
+            var hsmDecryptUri = "https://az400popmhsm.managedhsm.azure.net//keys/mypemrsakey/decrypt";
+            HttpRequestMessage decRequest = new HttpRequestMessage(HttpMethod.Post, hsmDecryptUri);
+            decRequest.Content = new StringContent("{\"alg\":\"RSA1_5\",\"value\":\"QKSjL7rXJCdhLCDqej1R_01BBFTFYedDmka1GnNoV4XC91rCQG7t58wBMRM3czvUaTbmA6aNXpKh7t_kk4a4WMK_OYhpjhqf4W8KmPuDJstWGq1CQCqDHHHczS-wcMkSlMVfu36mEC3IUJPIs_q-Zk_AED7hIAjdP8eauvWGeCAB9FB_7jPWNGKZTFMrjmD-kmlrSxCyOXSGuOmSHnz2H8nU8GEu8yO1JhSouNB6vP04MXcOEItoflZFpjSD3BARdx_Ty96qgb6PNQnfFH4xOv7tt_yYX0n0xCv6ATS8AEPDKS8_AGmBHoqBfN6FaasWwEG1cnK-VQqaXRi7YaNL3A\"}",
+                                    Encoding.UTF8, 
+                                    "application/json");//CONTENT-TYPE header
+            task = client.SendAsync(decRequest);
+            response = await task;
+            Console.WriteLine(response.StatusCode);
+            Console.WriteLine(response.Headers.ToString());
+            result = response.Content.ReadAsStringAsync().Result;
+            Console.WriteLine(result);
+         }
+    }
+}
